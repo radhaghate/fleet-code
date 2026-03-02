@@ -1,17 +1,23 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  const { description } = req.body;
+const generateTestCases = require('../lib/gemini');
 
-  res.json({
-    message: "Received problem",
-    descriptionReceived: description,
-    fakeTestCases: [
-      { input: "[1,2,3]", expected_output: "6" },
-      { input: "[-1,-2]", expected_output: "-1" }
-    ]
-  });
+router.post('/', async (req, res) => {
+  try {
+    const { description } = req.body;
+
+    const testCases = await generateTestCases(description);
+
+    res.json({
+      message: "Generated test cases",
+      testCases
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
 });
 
 module.exports = router;
