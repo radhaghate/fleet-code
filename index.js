@@ -8,6 +8,9 @@ const app = express();
 
 app.use(express.json());
 
+//const cors = require('cors');
+//app.use(cors());
+
 // Mount routes
 app.use('/api/generate', generateRoute);
 app.use('/api/problems', problemsRoute);
