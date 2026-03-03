@@ -1,14 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const supabase = require('../lib/supabase');
 
-// Example GET
-router.get('/:userId', (req, res) => {
-  res.json({ message: "Fetching problems for user", userId: req.params.userId });
-});
+// GET all problems
+router.get('/', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('problems')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-// Example POST
-router.post('/', (req, res) => {
-  res.json({ message: "Problem saved (fake)" });
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch problems" });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
 });
 
 module.exports = router;
